@@ -113,6 +113,66 @@ curl -X POST http://localhost:8081/api/recipes \
   -d '{"type":"VEGETARIAN","title":"Veggie Pasta","description":"...","ingredients":"...","instructions":"...","servings":4}'
 ```
 
+## Working with Branches
+
+### Creating a Feature Branch
+
+When creating a new feature branch, always branch from the `develop` branch to ensure your branch shares a common commit history:
+
+```bash
+# Fetch the latest changes from the remote
+git fetch origin
+
+# Switch to the develop branch
+git checkout develop
+
+# Pull the latest changes
+git pull origin develop
+
+# Create your feature branch from develop
+git checkout -b myfeature
+```
+
+### Troubleshooting: "There isn't anything to compare" Error
+
+If you see the error message:
+> "There isn't anything to compare. MCON-152-Fall-2025:develop and MCON-152-Fall-2025:myfeature are entirely different commit histories."
+
+This means your feature branch doesn't share a common ancestor with the target branch (develop). This typically happens when:
+- The feature branch was created using `git checkout --orphan` (which creates a new branch with no history)
+- The feature branch was initialized in a different repository and pushed
+- The branch was created without first checking out the develop branch
+
+**Solution:** Recreate your feature branch from the correct base:
+
+```bash
+# Save your current changes to a temporary location if needed
+git stash
+
+# Fetch and checkout the develop branch
+git fetch origin
+git checkout develop
+git pull origin develop
+
+# Create a new branch from develop
+git checkout -b myfeature-fixed
+
+# If you have stashed changes, apply them
+git stash pop
+
+# Continue working on your feature
+```
+
+If you have existing commits on your orphan branch that you want to keep, you can cherry-pick them onto the new branch:
+
+```bash
+# Note the commit hashes from your old branch first
+git log myfeature --oneline
+
+# Then after creating myfeature-fixed from develop:
+git cherry-pick <commit-hash>
+```
+
 ## Contributing
 
 Contributions are welcome! Please fork the repository and submit a pull request.
